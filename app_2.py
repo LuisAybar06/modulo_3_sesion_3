@@ -5,8 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
 
 
-#SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:ABlWJkUXndGVkfTlgiJEQQLKJsTXqleP@mainline.proxy.rlwy.net:46117/railway"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 metadata = MetaData()
 
