@@ -5,9 +5,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+#SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:ABlWJkUXndGVkfTlgiJEQQLKJsTXqleP@mainline.proxy.rlwy.net:46117/railway"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 metadata = MetaData()
+
 
 items = Table("items", metadata, autoload_with=engine)
 
