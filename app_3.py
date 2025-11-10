@@ -9,23 +9,19 @@ from io import StringIO
 import pandas as pd
 from joblib import load
 
-# from models import Prediction, Base
 from datetime import datetime
 import pytz
 import os
 
-# Configurar la base de datos
-# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:klpDIaCzwlovprlGTfKmNlaxYZbtKlKo@turntable.proxy.rlwy.net:20095/railway"
-SQLALCHEMY_DATABASE_URL = os.environ["SQLALCHEMY_DATABASE_URL"]
+#os.environ["SQLALCHEMY_DATABASE_URL"]
 
+SQLALCHEMY_DATABASE_URL = "SQLALCHEMY_DATABASE_URL"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 metadata = MetaData()
  
-# Cargar la tabla existente
 items = Table("items", metadata, autoload_with=engine)
 
-# Configurar la sesión de SQLAlchemy
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -44,9 +40,7 @@ def health_check(db=Depends(get_db)):
     """This is the health check endpoint"""
     return {"status": "ok"}
  
-# Operaciones CRUD 
 
-# Definir los modelos Pydantic
 class Item(BaseModel):
     id: int
     name: str
@@ -63,7 +57,6 @@ class ItemUpdate(ItemCreate):
     pass
 
 
-# Leer un elemento específico de la tabla
 @app.get("/items/{item_id}", response_model=Item)
 def read_item(item_id: int):
     with SessionLocal() as session:
@@ -73,7 +66,6 @@ def read_item(item_id: int):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
         return db_item._mapping
 
-# Crear un nuevo elemento en la tabla
 @app.post("/items/", response_model=Item)
 def create_item(item: ItemCreate):
     with SessionLocal() as session:
@@ -89,7 +81,6 @@ def create_item(item: ItemCreate):
         return created_item._mapping
 
     
-# Actualizar un elemento existente en la tabla
 @app.put("/items/{item_id}", response_model=Item)
 def update_item(item_id: int, item: ItemUpdate):
     with SessionLocal() as session:
@@ -100,7 +91,6 @@ def update_item(item_id: int, item: ItemUpdate):
         updated_item = session.execute(select(items).where(items.c.id == item_id)).fetchone()
         return updated_item._mapping
 
-# Eliminar un elemento de la tabla
 @app.delete("/items/{item_id}", response_model=Item)
 def delete_item(item_id: int):
     with SessionLocal() as session:
@@ -112,7 +102,6 @@ def delete_item(item_id: int):
         session.commit()
         return deleted_item._mapping
 
-# Buscar elementos por nombre parcial
 @app.get("/items/search/{query}", response_model=list[Item])
 def search_items(query: str):
     with SessionLocal() as session:
@@ -120,7 +109,6 @@ def search_items(query: str):
         results = session.execute(query).fetchall()
         return [result._mapping for result in results]
 
-# Obtener elementos con paginación
 @app.get("/items/", response_model=list[Item])
 def get_items(skip: int = 0, limit: int = 10):
     with SessionLocal() as session:
