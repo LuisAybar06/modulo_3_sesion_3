@@ -15,7 +15,7 @@ import os
 
 #SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:ABlWJkUXndGVkfTlgiJEQQLKJsTXqleP@mainline.proxy.rlwy.net:46117/railway"
 SQLALCHEMY_DATABASE_URL = os.environ["SQLALCHEMY_DATABASE_URL"]
-
+ 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 metadata = MetaData()
  
@@ -24,7 +24,6 @@ items = Table("items", metadata, autoload_with=engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-# Inicializar la aplicación FastAPI
 app = FastAPI()
 
 def get_db():
@@ -65,6 +64,7 @@ def read_item(item_id: int):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
         return db_item._mapping
 
+
 @app.post("/items/", response_model=Item)
 def create_item(item: ItemCreate):
     with SessionLocal() as session:
@@ -79,7 +79,7 @@ def create_item(item: ItemCreate):
         
         return created_item._mapping
 
-    
+
 @app.put("/items/{item_id}", response_model=Item)
 def update_item(item_id: int, item: ItemUpdate):
     with SessionLocal() as session:
@@ -89,6 +89,7 @@ def update_item(item_id: int, item: ItemUpdate):
         session.commit()
         updated_item = session.execute(select(items).where(items.c.id == item_id)).fetchone()
         return updated_item._mapping
+
 
 @app.delete("/items/{item_id}", response_model=Item)
 def delete_item(item_id: int):
@@ -101,12 +102,14 @@ def delete_item(item_id: int):
         session.commit()
         return deleted_item._mapping
 
+
 @app.get("/items/search/{query}", response_model=list[Item])
 def search_items(query: str):
     with SessionLocal() as session:
         query = select(items).where(items.c.name.ilike(f"%{query}%"))
         results = session.execute(query).fetchall()
         return [result._mapping for result in results]
+
 
 @app.get("/items/", response_model=list[Item])
 def get_items(skip: int = 0, limit: int = 10):
